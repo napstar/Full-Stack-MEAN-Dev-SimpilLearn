@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<title>Budget Tracker</title>
+<script src="app.js"></script>
+<script>
+    
+    $( document ).ready(function() {
+        //clear tab;
+        var _budget= new budget();
+        console.log(_budget);
+        $("#btnAdd").click(function(){
+            let _exp= new expense();
+             _exp=  addExpense();
+             _budget.addNewExpense(_exp);
+             console.log(_budget);
+             buildTable(_budget)
+              //show total
+              console.log('Total',_budget.getExpenseTotal());
+                //$("spantotal").text('john');
+                $('#lblTotal').html(_budget.getExpenseTotal());
+          });
+          //bind the click event to the body
+          $("body").on("click",".btn-info",function(ev){ 
+            var $row = $(this).closest("tr");    
+            var $text = $row.find(".nr").text();  
+            
+            
+           if( _budget.removeExpense($text))
+           {
+                buildTable(_budget);
+           }
+
+        });
+        
+       
+    });
+    //allow only numbers in txtAmount
+    function validateInput(e) {
+
+             return e.charCode === 0 || ((e.charCode >= 48 && e.charCode <= 57) || (e.charCode == 46 && document.getElementById("txtAmount").value.indexOf('.') < 0));
+    }
+    function buildTable(_budget)
+    {
+        clearTable();
+        let strRow="";
+        _budget.expensesList.forEach(function (arrayItem) {
+           let strTD="<tr><td class='nr'>"+arrayItem.name+"</td><td>"+arrayItem.description+"</td><td>"+arrayItem.amount+"</td><td><td><button class='btn btn-info'>Delete</button></tr>";
+            console.log("array item",arrayItem.name);
+            //strRow=strRow+strTD;
+            $('#tbl > tbody:last-child').append(strTD);
+        });
+       // strRow=strRow+"</tr>";
+        //append to table
+        //document.getElementById("myTable").tbl(-1).innerHTML 
+      
+    }
+    function clearTable()
+    {
+        $("#tbl").find("tr:gt(0)").remove();
+    }
+    function addExpense()
+    {
+            let name=$("#txtName").val();
+            let desc=$("#txtDescription").val();
+            let amt=$("#txtAmount").val();
+
+            let _expense= new expense(name,desc,amt);
+            if(_expense!==null || _expense!==undefined)
+            {
+                //clear txtboxes
+                clearTextBoxes();
+               
+            }
+            console.log(_expense);
+           
+            return _expense;
+    }
+    function clearTextBoxes()
+    {
+        $("input:text").val("");
+            
+    }
+</script>
+<style >
+    .flex-container {
+  display: flex;
+  justify-content: center;
+  align-items:flex-end;
+  height: 300px;
+  background-color: DodgerBlue;
+}
+
+</style>
+</head>
+<body>
+
+ <div class="container">
+        <h2>Expense Tracker</h2>
+        <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="usr">Name:</label>
+                        <input type="text" class="form-control" id="txtName">
+                      </div>
+                </div>
+                <div class="col-sm-3">
+                        <div class="form-group">
+                                <label for="usr">Description:</label>
+                                <input type="text" class="form-control" id="txtDescription">
+                              </div>
+                </div>
+                <div class="col-sm-3">
+                        <div class="form-group">
+                                <label for="usr">Amount:</label>
+                                <input type="text" class="form-control" id="txtAmount" type="number" onkeypress="return validateInput(event);">
+                              </div>
+                </div>
+                <div class="col-sm-3">
+                        <div class="form-group">
+                                
+                              <br/>
+                              
+                              <button type="button" class="btn btn-primary" id="btnAdd">Add Expense</button>
+                        </div>
+                      
+                </div>
+        </div>
+        <div class="row">
+                <table class="table" id="tbl">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          
+                        </tbody>
+                        
+                      </table>
+        </div>
+        <div class="col-lg-8" >
+                <div class="clearfix">
+                        <label  class="float-right" id='lblTotal'> 0.0</label>
+                        <label  class="float-right"  >  TOTAL :   </label>
+                      
+        </div>
+                      </div>
+                                       
+     
+ </div>
+
+</body>
+</html>
